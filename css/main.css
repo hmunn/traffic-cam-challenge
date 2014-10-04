@@ -1,0 +1,15 @@
+body, input {
+    font-family: 'Helvetica Neue', Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+#map {
+    height: 800px;
+    margin: 0;
+    padding: 0;
+}
+
+input {
+    width: 100%;
+}
