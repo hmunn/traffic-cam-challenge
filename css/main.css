@@ -13,3 +13,13 @@ body, input {
 input {
     width: 100%;
 }
+
+.cameraDetail {
+	text-align: center;
+}
+
+.cameraImg {
+	display: block;
+	margin-right: auto;
+	margin-left: auto;
+}
