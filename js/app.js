@@ -3,40 +3,45 @@
 
 "use strict";
 
-//put your code here to create the map, fetch the list of traffic cameras
-//and add them as markers on the map
-//when a user clicks on a marker, you should pan the map so that the marker
-//is at the center, and open an InfoWindow that displays the latest camera
-//image
-//you should also write the code to filter the set of markers when the user
-//types a search phrase into the search box
-
 $(document).ready(function(){
 	var mapElem = document.getElementById('map');
 
+	//initial window sizing
+	size();
+	
+	//map resizes on window size change
+	$(window).resize(function(){
+		size();
+	});
+
+	//created function to DRY window sizing
+	function size(){
+		$('#map').css({
+			'height' : $(window).height() - $('#map').position().top - 20
+		});
+	}
+	
+	//center
 	var center = {
 		lat: 47.6,
 		lng: -122.3
 	}
-
+	
+	//map constructor
 	var map = new google.maps.Map(mapElem, {
 		center: center,
-		zoom: 12
+		zoom: 12,
 	});
 
+	//for each variables
 	var image = 'img/camera.png';
-
 	var cameras;
 	var locations = [];
 	var infoWindow = new google.maps.InfoWindow();
 
-	$(window).resize(function(){
-		$('#map').css({
-			'height' : $(window).height() - $('#map').position().top - 20
-		});
-	});
-
+	//gets camera data
 	$.getJSON('http://data.seattle.gov/resource/65fc-btcc.json')
+		//success
 		.done(function(data) {
 			cameras = data;
 
@@ -50,18 +55,19 @@ $(document).ready(function(){
 					map : map
 				});
 				locations.push(location);
+				//infoWindow click and content
 				google.maps.event.addListener(location, 'click', function(){
 					map.panTo(this.getPosition());
-					var windowHtml = "<div class='cameraDetail'><p>" + camera.cameralabel + "</p>"
-					windowHtml += "<img class='cameraImg' src='" + camera.imageurl.url + "' /></div>"
+					var windowHtml = "<div class='cameraDetail'><img class='cameraImg' src='" + camera.imageurl.url + "' />";
+					windowHtml += "<p>" + camera.cameralabel + "</p></div>";
 					infoWindow.setContent(windowHtml);
 					infoWindow.open(map, this);
 				});
-
+				//infoWindow close
 				google.maps.event.addListener(map, 'click', function(){
 					infoWindow.close();
 				});
-
+				//camera search
 				$('#search').bind('search keyup', function(){
 					var searchString = $(this).val().toLowerCase();
 
@@ -73,10 +79,13 @@ $(document).ready(function(){
 				});
 			});
 		})
+		//fail
 		.fail(function(error){
-			console.log(error);
+			window.alert(error);
 		})
+		//always
 		.always(function(){
 			$('#ajax-loader').fadeOut();
-	});
+		});
 });// end document on ready
+
